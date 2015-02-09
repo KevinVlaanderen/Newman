@@ -181,7 +181,24 @@ var TestResponseHandler = jsface.Class(AbstractResponseHandler, {
             Backbone: Backbone,
             xmlToJson: function(string) {
                 var JSON = {};
-                xmlToJson.parseString(string, {explicitArray: false,async: false}, function (err, result) {
+
+                var prefixMatch;
+
+                  prefixMatch = new RegExp(/(?!xmlns)^.*:/);
+
+                  var normalize = function(str) {
+                    return str.toLowerCase();
+                  };
+
+                  var firstCharLowerCase = function(str) {
+                    return str.charAt(0).toLowerCase() + str.slice(1);
+                  };
+
+                  var stripPrefix = function(str) {
+                    return str.replace(prefixMatch, '');
+                  };
+
+                xmlToJson.parseString(string, {tagNameProcessors: [stripPrefix], attrNameProcessors: [stripPrefix], explicitArray: false,async: false}, function (err, result) {
                     JSON = result;
                 });
                 return JSON;
